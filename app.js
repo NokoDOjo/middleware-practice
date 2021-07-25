@@ -3,6 +3,17 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+
+// Add app.use to print out every req's TIME & METHOD & URL
+
+app.use(function (req, res, next) {
+  const time = Date.now()
+  if (req.url !== '/favicon.ico') {
+    console.log(`Time: ${new Date(time)}, ${req.method} from URL: ${req.originalUrl}`)
+  }
+  next()
+})
+
 app.get('/', (req, res) => {
   res.send('列出全部 Todo')
 })
