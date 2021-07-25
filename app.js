@@ -1,5 +1,7 @@
 // app.js
 const express = require('express')
+const onHeader = require('on-headers')
+const onFinished = require('on-finished')
 const app = express()
 const port = 3000
 
@@ -7,10 +9,15 @@ const port = 3000
 // Add app.use to print out every req's TIME & METHOD & URL
 
 app.use(function (req, res, next) {
-  const time = Date.now()
+  res._startTime = new Date().getTime()
   if (req.url !== '/favicon.ico') {
-    console.log(`Time: ${new Date(time)}, ${req.method} from URL: ${req.originalUrl}`)
-  }
+    onHeader(res, function () {
+    res._endTime = new Date().getTime();     
+    })
+    onFinished(res, function () {
+    console.log(`${new Date(res._startTime)} | ${req.method} from ${req.originalUrl} | total time: ${res._endTime - res._startTime} ms`)
+    })
+ }
   next()
 })
 
